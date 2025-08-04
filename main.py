@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 UDPsender
-A GUI application to send commands to any device over UDP.
+A GUI application to send commands to a device over UDP.
+
+Version 1.0 by Chris Bovee
 """
 
 import tkinter as tk
@@ -159,9 +161,9 @@ class UDPSender:
             # Run connection in separate thread to keep UI responsive
             connection_thread = threading.Thread(
                 target=self._connect_in_background,
-                args=(target_ip, target_port),
-                daemon=True
+                args=(target_ip, target_port)
             )
+            connection_thread.daemon = True  # Compatible with Python 3.0+
             connection_thread.start()
             
         except ValueError as e:
@@ -170,7 +172,9 @@ class UDPSender:
     def _start_connection_animation(self):
         self.connection_animation_active = True
         self.connection_toggle_button.config(state="disabled")
-        threading.Thread(target=self._animate_connection_dots, daemon=True).start()
+        animation_thread = threading.Thread(target=self._animate_connection_dots)
+        animation_thread.daemon = True  # Compatible with Python 3.0+
+        animation_thread.start()
     
     def _animate_connection_dots(self):
         base_message = "Trying to connect"
@@ -178,7 +182,7 @@ class UDPSender:
         
         while self.connection_animation_active:
             # Update the log with animated dots
-            current_message = f"{base_message}{dots}"
+            current_message = "{0}{1}".format(base_message, dots)
             
             # Use after() to safely update GUI from thread
             self.root.after(0, lambda msg=current_message: self._update_connection_status(msg))
@@ -202,7 +206,7 @@ class UDPSender:
     def _connect_in_background(self, target_ip, target_port):
         try:
             # Add initial log entry
-            self.root.after(0, lambda: self._add_log_entry(f"Setting up UDP connection to {target_ip}:{target_port}..."))
+            self.root.after(0, lambda: self._add_log_entry("Setting up UDP connection to {0}:{1}...".format(target_ip, target_port)))
             
             self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.udp_socket.settimeout(self.CONNECTION_TIMEOUT)
@@ -239,7 +243,7 @@ class UDPSender:
         try:
             response_data, sender_address = self.udp_socket.recvfrom(self.BUFFER_SIZE)
             response_text = response_data.decode('utf-8')
-            self.root.after(0, lambda: self._add_log_entry(f"Connection test successful: {response_text}"))
+            self.root.after(0, lambda: self._add_log_entry("Connection test successful: {0}".format(response_text)))
             return True
         except socket.timeout:
             self.root.after(0, lambda: self._add_log_entry("No response to ping, but UDP socket is ready"))
@@ -248,7 +252,7 @@ class UDPSender:
     def _finalize_connection(self, target_ip, target_port, connection_successful):
         self._stop_connection_animation()
         self._update_ui_for_connected_state()
-        self._add_log_entry(f"UDP connection ready for {target_ip}:{target_port}")
+        self._add_log_entry("UDP connection ready for {0}:{1}".format(target_ip, target_port))
     
     def _update_ui_for_connected_state(self):
         self.is_connected = True
@@ -265,13 +269,13 @@ class UDPSender:
     
     def _handle_socket_error(self, error):
         self._stop_connection_animation()
-        self._add_log_entry(f"Connection failed: {error}")
-        messagebox.showerror("Connection Error", f"Failed to connect: {error}")
+        self._add_log_entry("Connection failed: {0}".format(error))
+        messagebox.showerror("Connection Error", "Failed to connect: {0}".format(error))
     
     def _handle_unexpected_error(self, error):
         self._stop_connection_animation()
-        self._add_log_entry(f"Unexpected error: {error}")
-        messagebox.showerror("Error", f"Unexpected error: {error}")
+        self._add_log_entry("Unexpected error: {0}".format(error))
+        messagebox.showerror("Error", "Unexpected error: {0}".format(error))
     
     def _close_connection(self):
         # Stop any active connection animation
@@ -286,7 +290,7 @@ class UDPSender:
             self._add_log_entry("Disconnected from device")
             
         except Exception as e:
-            self._add_log_entry(f"Error during disconnection: {e}")
+            self._add_log_entry("Error during disconnection: {0}".format(e))
     
     def _update_ui_for_disconnected_state(self):
         self.is_connected = False
@@ -305,14 +309,14 @@ class UDPSender:
         
         try:
             self._transmit_command(command_text)
-            self._add_log_entry(f"Sent: {command_text}")
+            self._add_log_entry("Sent: {0}".format(command_text))
             self._attempt_to_receive_response()
             self._clear_command_input()
             
         except socket.error as e:
             self._handle_send_error(e)
         except Exception as e:
-            self._add_log_entry(f"Unexpected error: {e}")
+            self._add_log_entry("Unexpected error: {0}".format(e))
     
     def _validate_connection(self):
         if not self.is_connected or not self.udp_socket:
@@ -333,7 +337,7 @@ class UDPSender:
             response_data, sender_address = self.udp_socket.recvfrom(self.BUFFER_SIZE)
             response_text = response_data.decode('utf-8').strip()
             if response_text:
-                self._add_log_entry(f"Response: {response_text}")
+                self._add_log_entry("Response: {0}".format(response_text))
         except socket.timeout:
             pass  # No response received, which is normal for UDP
     
@@ -341,13 +345,13 @@ class UDPSender:
         self.command_text_var.set("")
     
     def _handle_send_error(self, error):
-        self._add_log_entry(f"Send failed: {error}")
-        messagebox.showerror("Send Error", f"Failed to send command: {error}")
+        self._add_log_entry("Send failed: {0}".format(error))
+        messagebox.showerror("Send Error", "Failed to send command: {0}".format(error))
         self._close_connection()
     
     def _add_log_entry(self, message):
         timestamp = datetime.now().strftime("%H:%M:%S")
-        formatted_entry = f"[{timestamp}] {message}\n"
+        formatted_entry = "[{0}] {1}\n".format(timestamp, message)
         
         self.response_log_display.insert(tk.END, formatted_entry)
         self.response_log_display.see(tk.END)
@@ -360,9 +364,9 @@ class UDPSender:
             filename = self._get_save_filename()
             if filename:
                 self._write_log_to_file(filename)
-                self._add_log_entry(f"Log saved to {filename}")
+                self._add_log_entry("Log saved to {0}".format(filename))
         except Exception as e:
-            messagebox.showerror("Save Error", f"Failed to save log: {e}")
+            messagebox.showerror("Save Error", "Failed to save log: {0}".format(e))
     
     def _get_save_filename(self):
         return filedialog.asksaveasfilename(
@@ -377,7 +381,7 @@ class UDPSender:
     
     def _show_about(self):
         about_window = tk.Toplevel(self.root)
-        about_window.title(f"About {APP_NAME}")
+        about_window.title("About {0}".format(APP_NAME))
         about_window.geometry("250x120")
         about_window.resizable(False, False)
         
@@ -389,7 +393,7 @@ class UDPSender:
         window_height = 120
         x = (screen_width - window_width) // 2
         y = (screen_height - window_height) // 2
-        about_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        about_window.geometry("{0}x{1}+{2}+{3}".format(window_width, window_height, x, y))
         
         about_window.transient(self.root)
         about_window.grab_set()
@@ -402,9 +406,9 @@ class UDPSender:
         title_frame = ttk.Frame(about_frame)
         title_frame.pack(pady=(0, 5))
         ttk.Label(title_frame, text=APP_NAME, font=("Arial", 12, "bold")).pack(side=tk.LEFT)
-        ttk.Label(title_frame, text=f" {APP_VERSION}", font=("Arial", 12)).pack(side=tk.LEFT)
+        ttk.Label(title_frame, text=" {0}".format(APP_VERSION), font=("Arial", 12)).pack(side=tk.LEFT)
         
-        ttk.Label(about_frame, text=f"by {APP_AUTHOR}").pack(pady=(0, 15))
+        ttk.Label(about_frame, text="by {0}".format(APP_AUTHOR)).pack(pady=(0, 15))
         
         ttk.Button(about_frame, text="OK", command=about_window.destroy).pack()
     
