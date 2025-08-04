@@ -3,7 +3,7 @@
 UDPsender
 A GUI application to send commands to a device over UDP.
 
-Version 1.0 by Chris Bovee
+Version 1.1 by Chris Bovee
 """
 
 import tkinter as tk

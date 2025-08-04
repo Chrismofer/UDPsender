@@ -30,6 +30,6 @@ EXAMPLE_COMMANDS = [
 
 # Application information
 APP_NAME = "UDPsender"
-APP_VERSION = "v1.0"
+APP_VERSION = "v1.1"
 APP_AUTHOR = "Chris Bovee"
 
