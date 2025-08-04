@@ -1,4 +1,5 @@
 # UDPsender
+<<<<<<< HEAD
 
 A Python GUI application for sending UDP commands to any network device. This application provides a simple interface to send text comm## Troubleshooting
 
@@ -217,3 +218,6 @@ Feel free to submit issues and pull requests to the [GitHub repository](https://
 ## License
 
 This project is open source and available under the MIT License.
+=======
+A simple python GUI for connecting to and controlling a device over UDP
+>>>>>>> 38dca3dc5353bad0469c6a0e81c1db5ac0a73c53
