@@ -1,14 +1,6 @@
 # UDPsender
 
-A Python GUI application for controlling a device over UDP. This application provides a simple interfce to send text commands to a chosen IP and port.
-
-
-## Features
-
-- **Easy Connection**: Simple GUI to connect to your device's network
-- **Input box**: Command input box to send text strings to the device
-- **Real-time Logging**: View sent and received responses, save and clear command history
-
+A Python GUI for controlling a device over UDP. This application provides a simple interface to send text commands to a chosen IP and port.
 
 ## Quick Start
 
@@ -31,13 +23,6 @@ A Python GUI application for controlling a device over UDP. This application pro
 
 
 ## Installation / Setup
-
-### Target Device Requirements
-Your target device should be:
-- Accessible over the network (WiFi, Ethernet, etc.)
-- Running a UDP server listening for packets
-- Configured to listen on a specific IP address and port (default: 169.254.1.1:1234)
-- Optionally able to send UDP responses back
 
 ### Windows
 
@@ -96,6 +81,13 @@ Your target device should be:
 If you don't have Git, download the ZIP file from the [GitHub repository](https://github.com/Chrismofer/UDPsender), extract it, and run `python main.py` from the extracted folder.
 
 
+### Target Device Requirements
+
+Your target device should be:
+- Accessible over the network (WiFi, Ethernet, etc.)
+- Running a UDP server listening for packets
+- Configured to listen on a specific IP address and port (default: 169.254.1.1:1234)
+- Optionally able to send UDP responses back
 
 ## Project Structure
 
@@ -114,7 +106,7 @@ UDPsender/
    - Ensure your computer can reach the target device's network
    - Verify the IP address and port number
    - Check that the device is running and accessible
-   - Try pinging the device: `ping 169.254.1.1`
+   - Try pinging the device in your command prompt: `ping 169.254.1.1`
 
 2. **No Response**:
    - The device might not be programmed to send responses
@@ -181,28 +173,11 @@ while True:
 
 ## Default Settings
 
-- **Default IP**: 169.254.1.1 (configurable for any device)
+- **Default IP**: 169.254.1.1
 - **Default Port**: 1234
 - **Protocol**: UDP
 - **Connection Timeout**: 5 seconds
 - **Response Timeout**: 1 second
-
-## Troubleshooting
-
-1. **Connection Failed**:
-   - Ensure your laptop can reach the target device's network
-   - Verify the IP address and port number
-   - Check that the device is running and accessible
-
-2. **No Response**:
-   - The device might not be programmed to send responses
-   - Check the device's logs for debugging
-   - UDP is connectionless, so one-way communication is normal
-
-3. **Network Issues**:
-   - Check network connectivity
-   - Verify firewall settings
-   - Ensure the device's UDP server is running correctly
 
 ## License
 
