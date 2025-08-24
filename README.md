@@ -2,6 +2,8 @@
 
 A Python GUI for controlling a device over UDP. This application provides a simple interface to send text commands to a chosen IP and port.
 
+<img width="639" height="643" alt="image" src="https://github.com/user-attachments/assets/f0383f5c-70ba-46b2-85ab-28c2b94eec09" />
+
 ## Quick Start
 
 1. **Start the Application**:
